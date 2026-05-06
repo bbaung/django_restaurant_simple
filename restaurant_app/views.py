@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import loader
 from .models import Menu
+from .forms import BookingForm
 # Create your views here.
 
 # def index(request):
@@ -16,9 +17,19 @@ def about(request):
     template = loader.get_template('about.html')
     return HttpResponse(template.render())
 
+# def booking(request):
+#     template = loader.get_template('book.html')
+#     return HttpResponse(template.render())
+
 def booking(request):
-    template = loader.get_template('book.html')
-    return HttpResponse(template.render())
+    context = {}
+    form = BookingForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        form = BookingForm()
+        
+    context['form'] = form
+    return render(request, 'book.html', context)
 
 def menu(request):
     mymenu = Menu.objects.all().values()
